@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+
+<project name="build-common-web" xmlns:antelope="antlib:ise.antelope.tasks" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+	<import file="build-common.xml" />
+
+	<macrodef name="manifest-macro">
+		<sequential>
+			<mkdir dir="docroot/WEB-INF/classes/META-INF" />
+
+			<manifest file="docroot/WEB-INF/classes/META-INF/MANIFEST.MF" mode="update">
+				<attribute name="Extension-List" value="crypto" />
+				<attribute name="crypto-Extension-Name" value="javax.crypto" />
+			</manifest>
+		</sequential>
+	</macrodef>
+
+	<target name="clean">
+		<delete dir="docroot/WEB-INF/classes" />
+		<delete failonerror="false" file="${war.file}.war" />
+
+		<delete>
+			<fileset dir="docroot" includes="**/.sprite.png" />
+			<fileset dir="docroot" includes="**/.sprite.properties" />
+			<fileset dir="docroot" includes="**/Thumbs.db" />
+		</delete>
+	</target>
+
+	<target name="deploy">
+		<manifest-macro />
+
+		<if>
+			<equals arg1="${war.file}" arg2="portal-web" />
+			<then>
+				<property name="war.file.dest" value="${app.server.portal.dir}" />
+			</then>
+			<else>
+				<if>
+					<or>
+						<equals arg1="${app.server.type}" arg2="glassfish" />
+						<equals arg1="${app.server.type}" arg2="jboss" />
+						<equals arg1="${app.server.type}" arg2="jonas" />
+						<equals arg1="${app.server.type}" arg2="wildfly" />
+					</or>
+					<then>
+						<property name="war.file.dest" value="${app.server.deploy.dir}/${war.file}.war" />
+					</then>
+					<else>
+						<property name="war.file.dest" value="${app.server.deploy.dir}/${war.file}" />
+					</else>
+				</if>
+			</else>
+		</if>
+
+		<if>
+			<and>
+				<equals arg1="${war.file}" arg2="portal-web" />
+				<equals arg1="${app.server.type}" arg2="tomcat" />
+				<antelope:endswith string="${app.server.portal.dir}" with="/portal-web/docroot" />
+			</and>
+			<then>
+			</then>
+			<else>
+				<if>
+					<available file="${war.file.dest}" type="file" />
+					<then>
+						<delete file="${war.file.dest}" />
+					</then>
+				</if>
+
+				<if>
+					<available file="tmp" type="dir" />
+					<then>
+						<copy preservelastmodified="true" todir="${war.file.dest}">
+							<fileset dir="tmp" />
+						</copy>
+					</then>
+					<elseif>
+						<available file="docroot" type="dir" />
+						<then>
+							<copy preservelastmodified="true" todir="${war.file.dest}">
+								<fileset dir="docroot">
+									<exclude name="**/css/*.scss" />
+								</fileset>
+								<filtermapper>
+									<replacestring from=".sass-cache" to="" />
+								</filtermapper>
+							</copy>
+						</then>
+					</elseif>
+					<else>
+						<unwar dest="${war.file.dest}" src="${war.file}.war" />
+					</else>
+				</if>
+			</else>
+		</if>
+
+		<if>
+			<or>
+				<equals arg1="${app.server.type}" arg2="jboss" />
+				<equals arg1="${app.server.type}" arg2="wildfly" />
+			</or>
+			<then>
+				<echo file="${war.file.dest}.dodeploy" />
+			</then>
+		</if>
+
+		<if>
+			<and>
+				<equals arg1="${app.server.type}" arg2="glassfish" />
+				<available file="${war.file.dest}" type="dir" />
+				<not>
+					<equals arg1="${war.file}" arg2="portal-web" />
+				</not>
+			</and>
+			<then>
+				<tstamp>
+					<format pattern="yyyyMMddkkmmssSSS" property="tstamp.value" />
+				</tstamp>
+
+				<jar
+					basedir="${war.file.dest}"
+					jarfile="${tstamp.value}"
+				/>
+
+				<delete dir="${war.file.dest}" />
+
+				<move file="${tstamp.value}" tofile="${war.file.dest}" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${app.server.type}" arg2="jonas" />
+			<then>
+				<delete file="${war.file.dest}/META-INF/context.xml" />
+			</then>
+		</if>
+
+		<if>
+			<equals arg1="${app.server.type}" arg2="resin" />
+			<then>
+				<replace file="${war.file.dest}/WEB-INF/web.xml">
+					<replacetoken><![CDATA[<web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">]]></replacetoken>
+					<replacevalue><![CDATA[<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">]]></replacevalue>
+				</replace>
+			</then>
+		</if>
+	</target>
+
+	<target depends="war" name="install-portal-release">
+		<install-portal-artifact packaging="war" />
+	</target>
+
+	<target depends="war" name="install-portal-snapshot">
+		<install-portal-artifact packaging="war" snapshot="true" />
+	</target>
+
+	<target depends="war" name="publish-portal-release">
+		<publish-portal-artifact packaging="war" />
+	</target>
+
+	<target depends="war" name="publish-portal-snapshot">
+		<publish-portal-artifact packaging="war" snapshot="true" />
+	</target>
+
+	<target name="war">
+		<manifest-macro />
+
+		<if>
+			<available file="docroot" />
+			<then>
+				<war
+					basedir="docroot"
+					destfile="${war.file}.war"
+					excludes="WEB-INF/web.xml"
+					webxml="docroot/WEB-INF/web.xml"
+				/>
+			</then>
+		</if>
+	</target>
+</project>

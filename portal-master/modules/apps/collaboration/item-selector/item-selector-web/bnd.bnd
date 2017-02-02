@@ -1,0 +1,5 @@
+Bundle-Name: Liferay Item Selector Web
+Bundle-SymbolicName: com.liferay.item.selector.web
+Bundle-Version: 2.0.4
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Item Selector

@@ -1,0 +1,266 @@
+<?xml version="1.0"?>
+
+<project default="zip-maven" name="portal-maven" xmlns:antelope="antlib:ise.antelope.tasks">
+	<import file="build-common.xml" />
+
+	<taskdef classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpathref="lib.classpath" name="xmltask" />
+
+	<condition else="" property="gpg.extension" value=".exe">
+		<contains casesensitive="false" string="${os.name}" substring="Windows" />
+	</condition>
+
+	<property name="gpg.executable" value="gpg${gpg.extension}" />
+
+	<condition else="" property="maven.extension" value=".bat">
+		<contains casesensitive="false" string="${os.name}" substring="Windows" />
+	</condition>
+
+	<property name="maven.executable" value="mvn${maven.extension}" />
+
+	<target name="deploy-artifacts">
+		<if>
+			<equals arg1="${gpg.keyname}" arg2="" />
+			<then>
+				<fail>
+.
+
+Set the properties "gpg.keyname" and "gpg.passphrase" in
+release.${user.name}.properties.
+
+See http://www.sonatype.com/people/2010/01/how-to-generate-pgp-signatures-with-maven
+for GPG setup instructions.
+				</fail>
+			</then>
+		</if>
+
+		<tstamp>
+			<format pattern="yyyyMMddkkmmssSSS" property="tstamp.value" />
+		</tstamp>
+
+		<antcall target="prepare-maven">
+			<param name="tstamp.value" value="${tstamp.value}" />
+		</antcall>
+
+		<ant dir="${tstamp.value}" inheritall="false" target="deploy" />
+
+		<delete dir="${tstamp.value}" />
+	</target>
+
+	<target name="deploy-release-artifacts">
+		<antcall target="deploy-artifacts">
+			<param name="lp.maven.repository.id" value="${lp.maven.release.repository.id}" />
+			<param name="lp.maven.repository.url" value="${lp.maven.release.repository.url}" />
+			<param name="lp.maven.version" value="${lp.version}" />
+		</antcall>
+	</target>
+
+	<target name="deploy-snapshot-artifacts">
+		<antcall target="deploy-artifacts">
+			<param name="lp.maven.repository.id" value="${lp.maven.snapshot.repository.id}" />
+			<param name="lp.maven.repository.url" value="${lp.maven.snapshot.repository.url}" />
+			<param name="lp.maven.version" value="${lp.version}-SNAPSHOT" />
+		</antcall>
+	</target>
+
+	<target name="install-artifacts">
+		<tstamp>
+			<format pattern="yyyyMMddkkmmssSSS" property="tstamp.value" />
+		</tstamp>
+
+		<antcall target="prepare-maven">
+			<param name="lp.maven.repository.id" value="" />
+			<param name="lp.maven.repository.url" value="" />
+			<param name="lp.maven.version" value="${lp.maven.version}" />
+			<param name="tstamp.value" value="${tstamp.value}" />
+		</antcall>
+
+		<ant dir="${tstamp.value}" inheritall="false" target="install" />
+
+		<delete dir="${tstamp.value}" />
+	</target>
+
+	<target name="install-release-artifacts">
+		<antcall target="install-artifacts">
+			<param name="lp.maven.version" value="${lp.version}" />
+		</antcall>
+	</target>
+
+	<target name="install-snapshot-artifacts">
+		<antcall target="install-artifacts">
+			<param name="lp.maven.version" value="${lp.version}-SNAPSHOT" />
+		</antcall>
+	</target>
+
+	<target name="jar-javadoc">
+		<ant dir="portal-client" inheritAll="false" target="jar-javadoc" />
+		<ant dir="portal-impl" inheritAll="false" target="jar-javadoc" />
+		<ant dir="portal-kernel" inheritAll="false" target="jar-javadoc" />
+		<ant dir="support-tomcat" inheritAll="false" target="jar-javadoc" />
+		<ant dir="util-bridges" inheritAll="false" target="jar-javadoc" />
+		<ant dir="util-java" inheritAll="false" target="jar-javadoc" />
+		<ant dir="util-slf4j" inheritAll="false" target="jar-javadoc" />
+		<ant dir="util-taglib" inheritAll="false" target="jar-javadoc" />
+	</target>
+
+	<target name="jar-sources">
+		<ant dir="portal-client" inheritAll="false" target="jar-sources" />
+		<ant dir="portal-impl" inheritAll="false" target="jar-sources" />
+		<ant dir="portal-kernel" inheritAll="false" target="jar-sources" />
+		<ant dir="support-tomcat" inheritAll="false" target="jar-sources" />
+		<ant dir="util-bridges" inheritAll="false" target="jar-sources" />
+		<ant dir="util-java" inheritAll="false" target="jar-sources" />
+		<ant dir="util-slf4j" inheritAll="false" target="jar-sources" />
+		<ant dir="util-taglib" inheritAll="false" target="jar-sources" />
+	</target>
+
+	<target name="prepare-maven">
+		<if>
+			<not>
+				<available file="dist/liferay-portal-${lp.version}.war" />
+			</not>
+			<then>
+				<fail>
+.
+
+dist/liferay-portal-${lp.version}.war is not available.
+
+Run "ant -f build-dist.xml all zip-portal-war" to generate that file.
+				</fail>
+			</then>
+		</if>
+
+		<antcall target="jar-javadoc" />
+		<antcall target="jar-sources" />
+
+		<ant dir="util-taglib" inheritAll="false" target="taglibdoc" />
+
+		<mkdir dir="${tstamp.value}" />
+
+		<copy todir="${tstamp.value}">
+			<fileset
+				dir="tools/maven"
+				includes="build.xml,readme.txt"
+			/>
+		</copy>
+
+		<copy file="tools/maven/build.properties" tofile="${tstamp.value}/build.properties">
+			<filterset>
+				<filter token="gpg.keyname" value="" />
+				<filter token="gpg.passphrase" value="" />
+				<filter token="repository.id" value="${lp.maven.repository.id}" />
+				<filter token="repository.url" value="${lp.maven.repository.url}" />
+				<filter token="version" value="${lp.maven.version}" />
+			</filterset>
+		</copy>
+
+		<mkdir dir="${tstamp.value}/dist" />
+
+		<copy todir="${tstamp.value}/dist">
+			<fileset
+				dir="lib/portal"
+				includes="portal-client.jar"
+			/>
+			<fileset
+				dir="portal-client"
+				includes="portal-client-javadoc.jar,portal-client-sources.jar"
+			/>
+			<fileset
+				dir="portal-impl"
+				includes="portal-impl.jar,portal-impl-javadoc.jar,portal-impl-sources.jar"
+			/>
+			<fileset
+				dir="portal-kernel"
+				includes="portal-kernel.jar,portal-kernel-javadoc.jar,portal-kernel-sources.jar"
+			/>
+			<fileset
+				dir="support-tomcat"
+				includes="support-tomcat.jar,support-tomcat-javadoc.jar,support-tomcat-sources.jar"
+			/>
+			<fileset
+				dir="util-bridges"
+				includes="util-bridges.jar,util-bridges-javadoc.jar,util-bridges-sources.jar"
+			/>
+			<fileset
+				dir="util-java"
+				includes="util-java.jar,util-java-javadoc.jar,util-java-sources.jar"
+			/>
+			<fileset
+				dir="util-slf4j"
+				includes="util-slf4j.jar,util-slf4j-javadoc.jar,util-slf4j-sources.jar"
+			/>
+			<fileset
+				dir="util-taglib"
+				includes="util-taglib.jar,util-taglib-javadoc.jar,util-taglib-sources.jar"
+			/>
+		</copy>
+
+		<copy
+			file="dist/liferay-portal-${lp.version}.war"
+			tofile="${tstamp.value}/dist/portal-web.war"
+		/>
+
+		<zip destfile="${tstamp.value}/dist/util-taglib-tlddoc.jar">
+			<zipfileset dir="${doc.dir}/taglibs" />
+		</zip>
+
+		<copy todir="${tstamp.value}/dist">
+			<fileset dir="tools/maven" excludes="build.*,readme.txt" />
+			<filterset>
+				<filter token="version" value="${lp.maven.version}" />
+			</filterset>
+			<mapper>
+				<chainedmapper>
+					<mapper from="*.xml" to="*.pom" type="glob" />
+				</chainedmapper>
+			</mapper>
+		</copy>
+
+		<mkdir dir="${tstamp.value}/lib" />
+
+		<copy todir="${tstamp.value}/lib">
+			<fileset
+				dir="lib/development"
+				includes="ant-contrib.jar,antelope.jar"
+			/>
+		</copy>
+
+		<mkdir dir="${tstamp.value}/license" />
+
+		<copy todir="${tstamp.value}/license">
+			<fileset
+				dir="lib"
+				includes="versions.html"
+			/>
+			<fileset
+				dir="."
+				includes="copyright.txt"
+			/>
+		</copy>
+	</target>
+
+	<target name="zip-maven">
+		<tstamp>
+			<format pattern="yyyyMMddkkmmssSSS" property="tstamp.value" />
+		</tstamp>
+
+		<antcall target="prepare-maven">
+			<param name="gpg.keyname" value="" />
+			<param name="gpg.passphrase" value="" />
+			<param name="lp.maven.repository.id" value="liferay" />
+			<param name="lp.maven.repository.url" value="http://localhost/nexus/content/repositories/liferay-release" />
+			<param name="lp.maven.version" value="${lp.version}" />
+			<param name="tstamp.value" value="${tstamp.value}" />
+		</antcall>
+
+		<mkdir dir="dist" />
+
+		<zip destfile="dist/liferay-portal-maven-${lp.version}.zip">
+			<zipfileset
+				dir="${tstamp.value}"
+				prefix="liferay-portal-maven-${lp.version}"
+			/>
+		</zip>
+
+		<delete dir="${tstamp.value}" />
+	</target>
+</project>

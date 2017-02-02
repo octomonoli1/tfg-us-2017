@@ -1,0 +1,10 @@
+;
+; Do not manually edit this file. See
+; https://github.com/git-commands/git-subrepo#readme for more information.
+;
+[subrepo]
+	cmdver = liferay
+	commit = 99e3d2d0e96d61f3e266cac4134b42d83d7d6421
+	mode = push
+	parent = 72cc17e1d8554de84e0477285548af26cf965f82
+	remote = git@github.com:liferay/com-liferay-item-selector.git

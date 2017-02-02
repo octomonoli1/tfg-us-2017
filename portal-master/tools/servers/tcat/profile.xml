@@ -1,0 +1,11 @@
+<profile-definition>
+	<name>Liferay @lp.version@</name>
+	<description>This is the Liferay @lp.version@ Portal server profile for use with Tcat Server.</description>
+	<environmentVariables>
+		<entry>
+			<string>JAVA_OPTS</string>
+			<string>${JAVA_OPTS} -Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true -Duser.timezone=GMT -Xmx1024m -XX:MaxPermSize=256m</string>
+		</entry>
+	</environmentVariables>
+	<artifactToVersion></artifactToVersion>
+</profile-definition>

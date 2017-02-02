@@ -1,0 +1,11 @@
+Bundle-Name: Liferay Frontend Editor AlloyEditor Web
+Bundle-SymbolicName: com.liferay.frontend.editor.alloyeditor.web
+Bundle-Version: 1.0.8
+Liferay-JS-Config: /META-INF/resources/js/config.js
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Rich Text Editors
+Web-ContextPath: /frontend-editor-alloyeditor-web
+-donotcopy: (\.touch|.*_diffs.*|.*.properties)
+-includeresource:\
+	content=../frontend-editor-lang/src/main/resources/content,\
+	META-INF/resources=tmp/META-INF/resources

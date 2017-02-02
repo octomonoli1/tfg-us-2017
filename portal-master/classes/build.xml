@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<project name="classes" basedir="." default="compile">
+	<import file="../build-common.xml" />
+
+	<target name="clean">
+		<delete>
+			<fileset dir="." includes="*.class" />
+		</delete>
+	</target>
+
+	<target name="compile">
+		<javac
+			classpathref="project.classpath"
+			compiler="${javac.compiler}"
+			debug="${javac.debug}"
+			deprecation="${javac.deprecation}"
+			encoding="${javac.encoding}"
+			includeAntRuntime="false"
+			includes="*.java"
+			nowarn="${javac.nowarn}"
+			srcdir="."
+		/>
+	</target>
+
+	<target name="Test" depends="compile">
+		<echo file="portal-ext.properties">liferay.home=${liferay.home}</echo>
+
+		<java
+			classname="Test"
+			classpathref="project.classpath"
+			fork="true"
+		>
+			<jvmarg value="-Dexternal-properties=com/liferay/portal/tools/dependencies/portal-tools.properties" />
+			<!--
+			<jvmarg value="-Duser.language=pt" />
+			<jvmarg value="-Duser.country=BR" />
+			<jvmarg value="-Duser.timezone=GMT" />
+			-->
+		</java>
+
+		<delete file="portal-ext.properties" quiet="true" />
+	</target>
+</project>

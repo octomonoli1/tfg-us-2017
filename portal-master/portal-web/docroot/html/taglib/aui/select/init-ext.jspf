@@ -1,0 +1,71 @@
+<%--
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+--%>
+
+<%
+if (request.getAttribute("aui:select:useNamespace") == null) {
+	useNamespace = GetterUtil.getBoolean((String)request.getAttribute("aui:form:useNamespace"), true);
+}
+
+if (!useNamespace) {
+	namespace = StringPool.BLANK;
+}
+
+if (Validator.isNull(label) && changesContext) {
+	title = StringUtil.appendParentheticalSuffix(LanguageUtil.get(resourceBundle, title), LanguageUtil.get(resourceBundle, "changing-the-value-of-this-field-reloads-the-page"));
+}
+else if (Validator.isNotNull(title)) {
+	title = LanguageUtil.get(resourceBundle, title);
+}
+
+String controlGroupCssClass = AUIUtil.buildControlGroupCss(inlineField, inlineLabel, wrapperCssClass, "select");
+String fieldCss = AUIUtil.buildCss("form-control", disabled, first, last, cssClass);
+
+boolean numericValue = false;
+
+if ((bean != null) && Validator.isNull(listType) && showEmptyOption) {
+	Object propertyInstance = null;
+
+	Class<?> propertyTypeClass = BeanPropertiesUtil.getObjectTypeSilent(bean, name, String.class);
+
+	if (propertyTypeClass.isPrimitive()) {
+		propertyInstance = _primitiveObjects.get(propertyTypeClass);
+	}
+	else {
+		try {
+			propertyInstance = propertyTypeClass.newInstance();
+		}
+		catch (Exception e) {
+		}
+	}
+
+	if (propertyInstance instanceof Number) {
+		numericValue = true;
+	}
+}
+%>
+
+<%!
+private static Map<Class<?>, Object> _primitiveObjects = new HashMap<Class<?>, Object>();
+
+static {
+	_primitiveObjects.put(byte.class, Byte.valueOf("0"));
+	_primitiveObjects.put(double.class, Double.valueOf(0));
+	_primitiveObjects.put(float.class, Float.valueOf(0));
+	_primitiveObjects.put(int.class, Integer.valueOf(0));
+	_primitiveObjects.put(long.class, Long.valueOf(0));
+	_primitiveObjects.put(short.class, Short.valueOf("0"));
+}
+%>

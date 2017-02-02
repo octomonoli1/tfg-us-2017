@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+
+<project basedir="." default="test" name="portal-test-tomcat" xmlns:antelope="antlib:ise.antelope.tasks">
+	<import file="build-test.xml" />
+
+	<target name="run-selenium-tomcat">
+		<app-server-properties-update>
+			app.server.type=tomcat
+		</app-server-properties-update>
+
+		<set-tomcat-version-number liferay.portal.bundle="${liferay.portal.bundle}" />
+
+		<if>
+			<not>
+				<isset property="build.app.server" />
+			</not>
+			<then>
+				<ant antfile="build-dist.xml" target="build-dist-tomcat" />
+			</then>
+		</if>
+
+		<antcall target="revert-test-properties" />
+
+		<antcall target="record-test-generated-properties" />
+
+		<if>
+			<isset property="vm.host" />
+			<then>
+				<replace
+					file="portal-web/test/test-portal-web.properties"
+					token="#vm.host="
+					value="vm.host=${vm.host}"
+				/>
+			</then>
+		</if>
+
+		<antcall target="prepare-virtual-host-name-properties" />
+
+		<if>
+			<isset property="test.base.dir.name" />
+			<then>
+				<antcall inheritAll="false" target="run-tomcat">
+					<param name="test.base.dir.name" value="${test.base.dir.name}" />
+					<param name="test.class" value="${test.class}" />
+				</antcall>
+			</then>
+			<else>
+				<antcall inheritAll="false" target="run-tomcat">
+					<param name="test.class" value="${test.class}" />
+				</antcall>
+			</else>
+		</if>
+	</target>
+
+	<target name="run-tomcat">
+		<antcall target="run-simple-server" />
+	</target>
+</project>

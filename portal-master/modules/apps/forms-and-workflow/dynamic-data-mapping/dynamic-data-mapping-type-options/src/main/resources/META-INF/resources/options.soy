@@ -1,0 +1,27 @@
+{namespace ddm}
+
+/**
+ * Prints the DDM form options field.
+ *
+ * @param label
+ * @param name
+ * @param required
+ * @param showLabel
+ */
+{template .options}
+	<div class="form-group liferay-ddm-form-field-options" data-fieldname="{$name}">
+		{if $showLabel}
+			<label class="control-label">
+				{$label}
+
+				{if $required}
+					<span class="icon-asterisk text-warning"></span>
+				{/if}
+			</label>
+		{/if}
+
+		<input name="{$name}" type="hidden" />
+
+		<div class="options"></div>
+	</div>
+{/template}

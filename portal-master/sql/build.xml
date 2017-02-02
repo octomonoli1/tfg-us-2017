@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+
+<project basedir="." default="rebuild-mysql" name="sql">
+	<import file="build-parent.xml" />
+</project>

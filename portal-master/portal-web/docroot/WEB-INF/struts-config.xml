@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+
+	<!-- Global Forwards -->
+
+	<global-forwards>
+		<forward name="/common/forward_js.jsp" path="/common/forward_js.jsp" />
+		<forward name="/common/forward_jsp.jsp" path="/common/forward_jsp.jsp" />
+		<forward name="/common/null.html" path="/common/null.html" />
+		<forward name="/common/null.jsp" path="/common/null.jsp" />
+		<forward name="/common/referer_js.jsp" path="/common/referer_js.jsp" />
+		<forward name="/common/referer_jsp.jsp" path="/common/referer_jsp.jsp" />
+		<forward name="/portal/error" path="portal.error" />
+		<forward name="/portal/portlet_access_denied" path="portal.portlet_access_denied" />
+		<forward name="/portal/portlet_inactive" path="portal.portlet_inactive" />
+		<forward name="/portal/portlet_not_setup" path="portal.portlet_not_setup" />
+		<forward name="/portal/status" path="portal.status" />
+	</global-forwards>
+
+	<!-- Action Mappings -->
+
+	<action-mappings>
+
+		<!-- Portal -->
+
+		<action forward="portal.api.jsonws" path="/portal/api/jsonws" />
+
+		<action path="/portal/edit_layout" type="com.liferay.portal.action.EditLayoutAction" />
+
+		<action forward="/portal/emoticons.jsp" path="/portal/emoticons" />
+
+		<action forward="portal.error" path="/portal/error" />
+
+		<action forward="/portal/expire_session.jsp" path="/portal/expire_session" />
+
+		<action forward="/portal/extend_session.jsp" path="/portal/extend_session" />
+
+		<action forward="/portal/flash.jsp" path="/portal/flash" />
+
+		<action path="/portal/get_layouts" type="com.liferay.portal.action.GetLayoutsAction" />
+
+		<action forward="/portal/j_login.jsp" path="/portal/j_login" />
+
+		<action forward="portal.j_login_error" path="/portal/j_login_error" />
+
+		<action path="/portal/json_service" type="com.liferay.portal.action.JSONServiceAction" />
+
+		<action path="/portal/layout" type="com.liferay.portal.action.LayoutAction">
+			<forward name="portal.layout" path="portal.layout" />
+		</action>
+
+		<action path="/portal/license" type="com.liferay.portal.action.UpdateLicenseAction">
+			<forward name="portal.license" path="portal.license" />
+		</action>
+
+		<action path="/portal/login" type="com.liferay.portal.action.LoginAction" />
+
+		<action forward="portal.login_disabled" path="/portal/login_disabled" />
+
+		<action path="/portal/logout" type="com.liferay.portal.action.LogoutAction" />
+
+		<action forward="portal.progress_poller" path="/portal/progress_poller" />
+
+		<action forward="/portal/protected.jsp" path="/portal/protected" />
+
+		<action path="/portal/rate_entry" type="com.liferay.portal.action.RateEntryAction" />
+
+		<action path="/portal/render_portlet" type="com.liferay.portal.action.RenderPortletAction">
+			<forward name="/portal/render_portlet" path="/portal/render_portlet.jsp" />
+		</action>
+
+		<action path="/portal/resiliency" type="com.liferay.portal.resiliency.spi.action.PortalResiliencyAction" />
+
+		<action path="/portal/rest_proxy" type="com.liferay.portal.action.RESTProxyAction" />
+
+		<action path="/portal/robots" type="com.liferay.portal.action.RobotsAction" />
+
+		<action path="/portal/session_click" type="com.liferay.portal.action.SessionClickAction" />
+
+		<action path="/portal/session_tree_js_click" type="com.liferay.portal.action.SessionTreeJSClickAction" />
+
+		<action path="/portal/setup_wizard" type="com.liferay.portal.action.SetupWizardAction">
+			<forward name="portal.setup_wizard" path="portal.setup_wizard" />
+		</action>
+
+		<action path="/portal/sitemap" type="com.liferay.portal.action.SitemapAction" />
+
+		<action forward="portal.status" path="/portal/status" />
+
+		<action forward="portal.terms_of_use" path="/portal/terms_of_use" />
+
+		<!--<action path="/portal/test" type="com.liferay.portal.action.TestAction">
+			<forward name="portal.test" path="portal.test" />
+		</action>
+
+		<action path="/portal/test_redirect" type="com.liferay.portal.action.TestRedirectAction">
+			<forward name="portal.test_redirect" path="/c/portal/test" redirect="true" />
+		</action>-->
+
+		<action forward="/portal/touch_protected.jsp" path="/portal/touch_protected" />
+
+		<action path="/portal/update_email_address" type="com.liferay.portal.action.UpdateEmailAddressAction">
+			<forward name="portal.update_email_address" path="portal.update_email_address" />
+		</action>
+
+		<action path="/portal/update_language" type="com.liferay.portal.action.UpdateLanguageAction" />
+
+		<action path="/portal/update_layout" type="com.liferay.portal.action.UpdateLayoutAction" />
+
+		<action path="/portal/update_password" type="com.liferay.portal.action.UpdatePasswordAction">
+			<forward name="portal.update_password" path="portal.update_password" />
+		</action>
+
+		<action path="/portal/update_portlet_title" type="com.liferay.portal.action.UpdatePortletTitleAction" />
+
+		<action path="/portal/update_reminder_query" type="com.liferay.portal.action.UpdateReminderQueryAction">
+			<forward name="portal.update_reminder_query" path="portal.update_reminder_query" />
+		</action>
+
+		<action path="/portal/update_terms_of_use" type="com.liferay.portal.action.UpdateTermsOfUseAction" />
+
+		<action path="/portal/verify_email_address" type="com.liferay.portal.action.VerifyEmailAddressAction">
+			<forward name="portal.verify_email_address" path="portal.verify_email_address" />
+		</action>
+
+		<!-- Asset -->
+
+		<action path="/asset/get_categories" type="com.liferay.portlet.asset.action.GetCategoriesAction" />
+	</action-mappings>
+
+	<!-- Custom Request Processor -->
+
+	<controller contentType="text/html; charset=UTF-8" processorClass="com.liferay.portal.struts.PortalRequestProcessor" />
+
+	<!-- Tiles Plugin -->
+
+	<plug-in className="com.liferay.portal.struts.PortalTilesPlugin">
+		<set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml,/WEB-INF/tiles-defs-ext.xml" />
+		<set-property property="definitions-factory-class" value="com.liferay.portal.struts.PortalI18nFactorySet" />
+		<set-property property="moduleAware" value="true" />
+	</plug-in>
+</struts-config>

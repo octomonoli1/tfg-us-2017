@@ -1,0 +1,5 @@
+lib/development/com.liferay.ant.beanshell.jar
+lib/development/com.liferay.ant.bnd.jar
+lib/development/com.liferay.ant.build.logger.jar
+lib/development/com.liferay.ant.heap.dump.jar
+lib/portal/portal-client.jar

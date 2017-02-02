@@ -1,0 +1,53 @@
+{namespace ddm}
+
+/**
+ * Prints the DDM form radio field.
+ *
+ * @param? childElementsHTML
+ * @param dir
+ * @param inline
+ * @param label
+ * @param name
+ * @param options
+ * @param readOnly
+ * @param required
+ * @param showLabel
+ * @param tip
+ */
+{template .radio autoescape="deprecated-contextual"}
+	<div class="form-group" data-fieldname="{$name}">
+		{if $showLabel}
+			<label class="control-label">
+				{$label}
+
+				{if $required}
+					<span class="icon-asterisk text-warning"></span>
+				{/if}
+			</label>
+
+			{if $tip}
+				<p class="liferay-ddm-form-field-tip">{$tip}</p>
+			{/if}
+		{/if}
+
+		<div class="clearfix radio radio-options">
+			{foreach $option in $options}
+				{if not $inline}
+					<div class="radio">
+				{/if}
+
+				<label class="{$inline ? ' radio-inline' : ''} radio-option-{$option.value}" for="{$name}_{$option.value}">
+					<input class="field" dir="{$dir or ''}" {if $readOnly}disabled{/if} id="{$name}_{$option.value}" name="{$name}" {$option.status} type="radio" value="{$option.value}" /> {$option.label}
+				</label>
+
+				{if not $inline}
+					</div>
+				{/if}
+			{/foreach}
+		</div>
+
+		{if $childElementsHTML}
+			{$childElementsHTML|noAutoescape}
+		{/if}
+	</div>
+{/template}

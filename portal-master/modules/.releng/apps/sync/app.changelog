@@ -1,0 +1,69 @@
+#
+# Liferay App Version 4.0.0
+#
+
+app.artifacts-4.0.0=\
+	com.liferay.sync.api-1.1.0.jar,\
+	com.liferay.sync.security-2.0.3.jar,\
+	com.liferay.sync.service-1.0.3.jar,\
+	com.liferay.sync.web-1.0.1.jar
+
+app.change.log-4.0.0=LPS-59841 LPS-61088 LPS-61099 LPS-61420 LPS-61896 LPS-61907 LPS-61952 LPS-63112 LPS-63161 LPS-63416 LPS-63499 LPS-63706 LPS-63797 LPS-63857 LPS-64021 LPS-64031 LPS-64182 LPS-64414 LPS-64419 LPS-64991 LPS-65119 LPS-65225 LPS-65492 LPS-65633 LPS-65774 LPS-66050 LPS-66064 SYNC-1474 SYNC-1571 SYNC-1600 SYNC-1607 SYNC-1608
+
+app.git.id-4.0.0=02a9a187bd9502ca9f9b73e461a9399ee1033f89
+
+#
+# Liferay App Version 4.0.1
+#
+
+app.artifacts-4.0.1=\
+	com.liferay.sync.api-1.1.0.jar,\
+	com.liferay.sync.security-2.0.3.jar,\
+	com.liferay.sync.service-1.0.3.jar,\
+	com.liferay.sync.web-1.0.2.jar
+
+app.change.log-4.0.1=LPS-66050 LPS-66416 SYNC-1607
+
+app.git.id-4.0.1=ec3e3200817b635637fb453bce60bef95f2f9bbb
+
+#
+# Liferay App Version 4.0.2
+#
+
+app.artifacts-4.0.2=\
+	com.liferay.sync.api-1.1.0.jar,\
+	com.liferay.sync.security-2.0.3.jar,\
+	com.liferay.sync.service-1.0.4.jar,\
+	com.liferay.sync.web-1.0.2.jar
+
+app.change.log-4.0.2=LPS-66416 SYNC-1607 SYNC-1612
+
+app.git.id-4.0.2=a9b83f3a39ca547fb7b2cf6e41a2a3e97f14bce8
+
+#
+# Liferay App Version 4.0.3
+#
+
+app.artifacts-4.0.3=\
+	com.liferay.sync.api-1.1.0.jar,\
+	com.liferay.sync.security-2.0.3.jar,\
+	com.liferay.sync.service-1.0.5.jar,\
+	com.liferay.sync.web-1.0.2.jar
+
+app.change.log-4.0.3=LPS-66416 SYNC-1607 SYNC-1612
+
+app.git.id-4.0.3=ed3baf2bb3796f6230a62da935430b7479db7374
+
+#
+# Liferay App Version 4.0.4
+#
+
+app.artifacts-4.0.4=\
+	com.liferay.sync.api-2.0.0.jar,\
+	com.liferay.sync.security-2.0.3.jar,\
+	com.liferay.sync.service-1.1.1.jar,\
+	com.liferay.sync.web-1.0.3.jar
+
+app.change.log-4.0.4=LPS-66662 LPS-66853 SYNC-1569 SYNC-1607 SYNC-1638 SYNC-1643
+
+app.git.id-4.0.4=7482cd66e0fa06968ef9ef67045866e4c223c5ff

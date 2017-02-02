@@ -1,0 +1,97 @@
+<%--
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+--%>
+
+<%
+if (!useNamespace) {
+	namespace = StringPool.BLANK;
+}
+
+Object bodyContent = request.getAttribute("aui:button:bodyContent");
+
+String bodyContentString = StringPool.BLANK;
+
+if (bodyContent != null) {
+	bodyContentString = bodyContent.toString();
+}
+
+boolean dropdown = Validator.isNotNull(bodyContentString.trim());
+
+String escapedHREF = StringPool.BLANK;
+
+if (Validator.isNotNull(href)) {
+	escapedHREF = HtmlUtil.escapeAttribute(PortalUtil.escapeRedirect(href));
+}
+else if (onClick.startsWith(Http.HTTP_WITH_SLASH) || onClick.startsWith(Http.HTTPS_WITH_SLASH) || onClick.startsWith(StringPool.SLASH)) {
+	href = onClick;
+
+	escapedHREF = HtmlUtil.escapeAttribute(PortalUtil.escapeRedirect(href));
+}
+else if (onClick.startsWith("wsrp_rewrite?")) {
+	href = onClick;
+
+	escapedHREF = HtmlUtil.escapeAttribute(href);
+}
+
+if (useDialog && Validator.isNotNull(escapedHREF)) {
+	if (data == null) {
+		data = new HashMap<String, Object>();
+	}
+
+	data.put("href", href);
+	data.put("title", LanguageUtil.get(resourceBundle, value));
+
+	onClick = StringPool.BLANK;
+
+	if (Validator.isNull(name)) {
+		name = StringUtil.randomId();
+	}
+}
+
+if (Validator.isNull(id)) {
+	if (Validator.isNotNull(name)) {
+		id = name;
+	}
+	else {
+		id = StringUtil.randomId();
+	}
+}
+
+id = namespace + id;
+
+if (primary == null) {
+	if (type.equals("submit")) {
+		primary = true;
+	}
+	else {
+		primary = false;
+	}
+}
+else {
+	primary = GetterUtil.getBoolean(String.valueOf(primary));
+}
+
+if (primary == Boolean.TRUE) {
+	cssClass += " btn-primary";
+}
+
+if (type.equals("cancel")) {
+	cssClass += " btn-cancel btn-default";
+}
+
+if (dropdown) {
+	cssClass += " dropdown-toggle direction-down";
+}
+%>

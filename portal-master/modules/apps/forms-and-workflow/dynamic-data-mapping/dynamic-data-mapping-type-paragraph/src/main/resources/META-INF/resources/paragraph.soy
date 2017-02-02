@@ -1,0 +1,16 @@
+{namespace ddm}
+
+/**
+ * Prints the DDM form paragraph field.
+ *
+ * @param label
+ * @param name
+ * @param text
+ */
+{template .paragraph autoescape="deprecated-contextual"}
+	<div class="form-group liferay-ddm-form-field-paragraph" data-fieldname="{$name}">
+		<label class="control-label" for="{$name}">{$label}</label>
+
+		<div>{$text|noAutoescape}</div>
+	</div>
+{/template}

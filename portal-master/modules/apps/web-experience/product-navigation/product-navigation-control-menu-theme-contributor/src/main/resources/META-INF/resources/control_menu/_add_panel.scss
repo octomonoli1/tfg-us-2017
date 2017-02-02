@@ -1,0 +1,41 @@
+@import "bourbon";
+@import "mixins";
+
+body.open-admin-panel {
+	&, .control-menu {
+		@include sm() {
+			padding-right: $admin-panel-width;
+		}
+	}
+
+	.control-menu-level-2 {
+		@include sm() {
+			right: $admin-panel-width;
+		}
+	}
+}
+
+body.open-admin-panel, body.sidenav-transition {
+	@include sm() {
+		overflow-x: hidden;
+	}
+}
+
+.lfr-add-panel.open-admin-panel {
+	visibility: visible;
+	width: $admin-panel-width;
+}
+
+.lfr-admin-panel {
+	&.sidenav-menu-slider {
+		z-index: $admin-panel-zindex;
+
+		.product-menu {
+			width: $admin-panel-width;
+		}
+	}
+
+	.sidebar-body {
+		padding: 0;
+	}
+}

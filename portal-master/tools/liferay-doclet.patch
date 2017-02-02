@@ -1,0 +1,109 @@
+--- com/liferay/tools/doclets/internal/toolkit/util/SourceToHTMLConverter.java
++++ com/liferay/tools/doclets/internal/toolkit/util/SourceToHTMLConverter.java
+@@ -11,6 +11,7 @@
+ import com.sun.javadoc.*;
+ import java.io.*;
+ import java.util.*;
++import java.util.regex.*;
+ 
+ /**
+  * Converts Java Source Code to HTML.
+@@ -23,16 +24,35 @@
+  * @since 1.4
+  */
+ public class SourceToHTMLConverter {
+-    
+-    /**
+-     * The background color.
+-     */
+-    protected static final String BGCOLOR = "white";
+-    
+-    /**
+-     * The line number color.
+-     */
+-    protected static final String LINE_NO_COLOR = "green";
++
++    protected static final String HEADER =
++        "<HTML>\n" +
++        "<head>\n" +
++        "<style>\n" +
++        ".line { color: gray }\n" +
++        ".keyword { color: blue }\n" +
++        ".comment { color: green }\n" +
++        ".comment .keyword { color: green }\n" +
++        "</style>\n" +
++        "</head>\n" +
++        "<BODY>\n" +
++        "<PRE>\n";
++
++    protected static final String KEYWORD_REPLACEMENT = "<span class=\"keyword\">$0</span>";
++    protected static final String COMMENT_START_REPLACEMENT = "<span class=\"comment\">$0";
++    protected static final String COMMENT_END_REPLACEMENT = "$0</span>";
++    protected static final String COMMENT_REPLACEMENT = "<span class=\"comment\">$0</span>";
++
++    protected static final Pattern KEYWORD_PATTERN = Pattern.compile(
++        "\\b(abstract|continue|for|new|switch|assert|default|if|package|" +
++        "synchronized|boolean|do|goto|private|this|break|double|implements|" +
++        "protected|throw|byte|else|import|public|throws|case|enum|instanceof|" +
++        "return|transient|catch|extends|int|short|try|char|final|interface|" +
++        "static|void|class|finally|long|strictfp|volatile|const|float|native|" +
++        "super|while)\\b");
++    protected static final Pattern COMMENT_START_PATTERN = Pattern.compile("/\\*");
++    protected static final Pattern COMMENT_END_PATTERN = Pattern.compile("\\*/");
++    protected static final Pattern COMMENT_PATTERN = Pattern.compile("//.*");
+     
+     /**
+      * The number of trailing blank lines at the end of the page.
+@@ -177,10 +197,7 @@
+      * @return the header to the output file
+      */
+     protected static String getHeader() {
+-        StringBuffer result = new StringBuffer("<HTML>" + DocletConstants.NL);
+-        result.append("<BODY BGCOLOR=\""+ BGCOLOR + "\">" + DocletConstants.NL);
+-        result.append("<PRE>" + DocletConstants.NL);
+-        return result.toString();
++        return HEADER;
+     }
+     
+     /**
+@@ -203,8 +220,7 @@
+      * @return the HTML code for the line
+      */
+     protected static String getHTMLLineNo(int lineno) {
+-        StringBuffer result = new StringBuffer("<FONT color=\"" + LINE_NO_COLOR 
+-            + "\">");
++        StringBuffer result = new StringBuffer("<span id=\"line." + Integer.toString(lineno) + "\" class=\"line\">");
+         if (lineno < 10) {
+             result.append("00" + ((new Integer(lineno)).toString()));
+         } else if (lineno < 100) {
+@@ -212,7 +228,7 @@
+         } else {
+             result.append((new Integer(lineno)).toString());
+         }
+-        result.append("</FONT>    ");
++        result.append("</span>    ");
+         return result.toString();
+     }
+     
+@@ -228,9 +244,18 @@
+         if (line == null) {
+             return null;
+         }
+-        StringBuffer lineBuffer = new StringBuffer(Util.escapeHtmlChars(line));
+-        //Insert an anchor for the line
+-        lineBuffer.append("<a name=\"line." + Integer.toString(currentLineNo) + "\"></a>");
++
++        line = Util.escapeHtmlChars(line);
++        Matcher matcher = KEYWORD_PATTERN.matcher(line);
++        line = matcher.replaceAll(KEYWORD_REPLACEMENT);
++        matcher = COMMENT_START_PATTERN.matcher(line);
++        line = matcher.replaceAll(COMMENT_START_REPLACEMENT);
++        matcher = COMMENT_END_PATTERN.matcher(line);
++        line = matcher.replaceAll(COMMENT_END_REPLACEMENT);        
++        matcher = COMMENT_PATTERN.matcher(line);
++        line = matcher.replaceAll(COMMENT_REPLACEMENT);
++        StringBuffer lineBuffer = new StringBuffer(line);
++
+         lineBuffer.append(DocletConstants.NL);
+         Util.replaceTabs(tabLength, lineBuffer);
+         return lineBuffer.toString();

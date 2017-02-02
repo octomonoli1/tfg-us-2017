@@ -1,0 +1,241 @@
+<?xml version="1.0"?>
+
+<custom-sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetCategoryFinder.countByG_C_N">
+		<![CDATA[
+			SELECT
+				COUNT(DISTINCT AssetEntries_AssetCategories.entryId) AS COUNT_VALUE
+			FROM
+				AssetCategory
+			INNER JOIN
+				AssetEntries_AssetCategories ON
+					(AssetEntries_AssetCategories.categoryId = AssetCategory.categoryId)
+			WHERE
+				(AssetEntries_AssetCategories.entryId IN (
+					SELECT
+						entryId
+					FROM
+						AssetEntry
+					WHERE
+						(AssetEntry.groupId = ?) AND
+						(AssetEntry.classNameId = ?) AND
+						(AssetEntry.visible = [$TRUE$])
+				)) AND
+				(AssetCategory.name LIKE ? OR ? IS NULL)
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetCategoryFinder.countByG_N_P">
+		<![CDATA[
+			SELECT
+				COUNT(DISTINCT AssetCategory.categoryId) AS COUNT_VALUE
+			FROM
+				AssetCategory
+			[$JOIN$]
+			WHERE
+				(AssetCategory.groupId = ?) AND
+				(AssetCategory.name LIKE ? OR ? IS NULL)
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetCategoryFinder.findByG_N">
+		<![CDATA[
+			SELECT
+				{AssetCategory.*}
+			FROM
+				AssetCategory
+			WHERE
+				(AssetCategory.groupId = ?) AND
+				(lower(AssetCategory.name) = ?)
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetCategoryFinder.findByG_N_P">
+		<![CDATA[
+			SELECT
+				{AssetCategory.*}
+			FROM
+				AssetCategory
+			[$JOIN$]
+			WHERE
+				(AssetCategory.groupId = ?) AND
+				(AssetCategory.name LIKE ? OR ? IS NULL)
+			ORDER BY
+				AssetCategory.name ASC
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetEntryFinder.findByAndCategoryIds">
+		<![CDATA[
+			EXISTS
+				(
+					SELECT
+						1
+					FROM
+						AssetEntries_AssetCategories
+					WHERE
+						(AssetEntries_AssetCategories.entryId = AssetEntry.entryId) AND
+						(AssetEntries_AssetCategories.categoryId IN ([$CATEGORY_ID$]))
+				)
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetEntryFinder.findByAndTagIds">
+		<![CDATA[
+			SELECT
+				DISTINCT AssetEntries_AssetTags.entryId
+			FROM
+				AssetEntries_AssetTags
+			WHERE
+				([$TAG_ID$])
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetEntryFinder.findByClassNameId">
+		<![CDATA[
+			SELECT
+				{AssetEntry.*}
+			FROM
+				AssetEntry
+			[$JOIN$]
+			WHERE
+				[$WHERE$]
+				(AssetEntry.classNameId = ?)
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetTagFinder.countByG_N">
+		<![CDATA[
+			SELECT
+				COUNT(DISTINCT AssetEntries_AssetTags.entryId) AS COUNT_VALUE
+			FROM
+				AssetTag
+			INNER JOIN
+				AssetEntries_AssetTags ON
+					(AssetEntries_AssetTags.tagId = AssetTag.tagId)
+			WHERE
+				(AssetEntries_AssetTags.entryId IN (
+					SELECT
+						entryId
+					FROM
+						AssetEntry
+					WHERE
+						(AssetEntry.groupId = ?) AND
+						(AssetEntry.visible = [$TRUE$])
+				)) AND
+				(AssetTag.name LIKE ?)
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetTagFinder.countByG_C_N">
+		<![CDATA[
+			SELECT
+				COUNT(DISTINCT AssetEntries_AssetTags.entryId) AS COUNT_VALUE
+			FROM
+				AssetTag
+			INNER JOIN
+				AssetEntries_AssetTags ON
+					(AssetEntries_AssetTags.tagId = AssetTag.tagId)
+			WHERE
+				(AssetEntries_AssetTags.entryId IN (
+					SELECT
+						entryId
+					FROM
+						AssetEntry
+					WHERE
+						(AssetEntry.groupId = ?) AND
+						(AssetEntry.classNameId = ?) AND
+						(AssetEntry.visible = [$TRUE$])
+				)) AND
+				(AssetTag.name LIKE ? OR ? IS NULL)
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetTagFinder.findByG_C_N">
+		<![CDATA[
+			SELECT
+				DISTINCT {AssetTag.*}
+			FROM
+				AssetTag
+			INNER JOIN
+				AssetEntries_AssetTags ON
+					(AssetEntries_AssetTags.tagId = AssetTag.tagId)
+			WHERE
+				(AssetEntries_AssetTags.entryId IN (
+					SELECT
+						entryId
+					FROM
+						AssetEntry
+					WHERE
+						(AssetEntry.groupId = ?) AND
+						(AssetEntry.classNameId = ?) AND
+						(AssetEntry.visible = [$TRUE$])
+				)) AND
+				(AssetTag.name LIKE ? OR ? IS NULL)
+			ORDER BY
+				AssetTag.name ASC
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetTagFinder.findByG_N_S_E">
+		<![CDATA[
+			SELECT
+				AssetTag.tagId, AssetTag.name, SUM(SocialActivityCounter.currentValue)
+			FROM
+				AssetTag
+			INNER JOIN
+				AssetEntries_AssetTags ON
+					(AssetEntries_AssetTags.tagId = AssetTag.tagId)
+			INNER JOIN
+				AssetEntry AssetEntry ON
+					(AssetEntry.entryId = AssetEntries_AssetTags.entryId)
+			INNER JOIN
+				SocialActivityCounter ON
+					(SocialActivityCounter.classNameId = AssetEntry.classNameId) AND
+					(SocialActivityCounter.classPK = AssetEntry.classPK)
+			WHERE
+				(SocialActivityCounter.groupId = ?) AND
+				(SocialActivityCounter.name = ?) AND
+				(SocialActivityCounter.startPeriod >= ?) AND
+				(SocialActivityCounter.startPeriod <= ?) AND
+				(SocialActivityCounter.startPeriod + ? <= ?)
+			GROUP BY
+				AssetTag.tagId, AssetTag.name
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetVocabularyFinder.countByG_N">
+		<![CDATA[
+			SELECT
+				COUNT(DISTINCT AssetVocabulary.vocabularyId) AS COUNT_VALUE
+			FROM
+				AssetVocabulary
+			WHERE
+				(AssetVocabulary.groupId = ?) AND
+				(AssetVocabulary.name LIKE ? OR ? IS NULL)
+		]]>
+	</sql>
+	<sql id="com.liferay.asset.kernel.service.persistence.AssetVocabularyFinder.findByG_N">
+		<![CDATA[
+			SELECT
+				{AssetVocabulary.*}
+			FROM
+				AssetVocabulary
+			WHERE
+				(AssetVocabulary.groupId = ?) AND
+				(lower(AssetVocabulary.name) LIKE ? OR ? IS NULL)
+			ORDER BY
+				AssetVocabulary.name ASC
+		]]>
+	</sql>
+	<sql id="com.liferay.portlet.asset.service.impl.AssetLinkLocalServiceImpl.deleteByAssetEntryGroupId">
+		<![CDATA[
+			DELETE FROM
+				AssetLink
+			WHERE
+				EXISTS
+					(
+						SELECT
+							1
+						FROM
+							AssetEntry AssetEntry1, AssetEntry AssetEntry2
+						WHERE
+							(AssetLink.entryId1 = AssetEntry1.entryId) AND
+							(AssetLink.entryId2 = AssetEntry2.entryId) AND
+							(
+								(AssetEntry1.groupId = ?) OR
+								(AssetEntry2.groupId = ?)
+							)
+					)
+		]]>
+	</sql>
+</custom-sql>

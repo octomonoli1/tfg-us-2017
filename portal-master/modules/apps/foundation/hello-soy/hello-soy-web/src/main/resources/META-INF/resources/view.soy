@@ -1,0 +1,14 @@
+{namespace hello_soy_view}
+
+/**
+ * Prints the Hello Soy portlet view page.
+ *
+ * @param descriptionURL
+ * @param portletURL
+ * @param userName
+ */
+{template .render}
+	Hello, {$userName}! <a href="{$portletURL}">Go to the edit page.</a><br />
+
+	<a href="{$descriptionURL}">Read the description.</a>
+{/template}

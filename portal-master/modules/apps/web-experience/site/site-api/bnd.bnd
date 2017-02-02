@@ -1,0 +1,8 @@
+Bundle-Name: Liferay Site API
+Bundle-SymbolicName: com.liferay.site.api
+Bundle-Version: 2.0.4
+Export-Package:\
+	com.liferay.site.constants,\
+	com.liferay.site.util
+Liferay-Releng-Module-Group-Description:
+Liferay-Releng-Module-Group-Title: Site Management
