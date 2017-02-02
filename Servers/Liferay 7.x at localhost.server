@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<server AGENT_PORT="29998" auto-publish-time="0" hostname="localhost" id="Liferay 7.x at localhost" name="Liferay 7.x at localhost" runtime-id="Liferay 7.0" server-type="com.liferay.ide.server.portal" server-type-id="com.liferay.ide.server.portal" start-timeout="900" stop-timeout="300" timestamp="2"/>
